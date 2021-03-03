@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="/css/all.min.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: rgb(35, 35, 77);
+      }
+      button {
+        margin-left: 20px;
+      }
+      small {
+        font-size: 1rem;
+        font-style: italic;
+        opacity: 0.6;
+      }
+      .form-control {
+        background-color: transparent;
+        border-radius: 0;
+        border-top: 2px;
+        border-left: 2px;
+        border-right: 2px;
+      }
+      .card {
+        /* display: none; */
+        width: 300px;
+        min-height: 20rem;
+        border-radius: 10px;
+        /* box-shadow: 2px 2px 2px rgb(253, 253, 253); */
+        border: 2px solid black;
+        padding: 0.8rem;
+        margin-top: 90px;
+      }
+      .cards {
+        display: flex;
+        justify-content: space-between;
+      }
+      /* .degree{
+            font-size: 3em;
+            margin-left: 8rem;
+        } */
+      .card-title {
+        font-family: "Baloo Bhai 2", cursive;
+        font-size: 1.2rem;
+      }
+      .row {
+        margin-top: 4rem;
+      }
+      .details {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .details h1 {
+        padding: 40px 29px;
+        margin-left: 19px;
+      }
+      .details h2 {
+        font-size: 2.5rem;
+        margin-bottom: 39px;
+        padding: -42px;
+        margin-left: -24px;
+      }
+      .card {
+        display: none;
+      }
+
+      .card-body h5{
+          font-size: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1 class="text-light display-2 mt-4">
+          Weather Forecast APP <small>~By Div_Chu</small>
+        </h1>
+      </header>
+      <div class="row">
+        <div class="col-md-6 d-flex">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Enter City Zipcode.."
+          />
+          <button class="btn btn-danger">Submit</button>
+        </div>
+      </div>
+      <div class="cards mt-4">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title"></h3>
+            <hr>
+            <div class="details">
+              <h1 class="display-2">20</h1>
+              <h2 class="degree text-center text-warning">°C</h2>
+            </div>
+            <h5 class="text-center">Wind Speed: <span class="wind text-success"></span></h5>
+            <h5 class="text-center">Humidity: <span class="humid text-danger"></span></h5>
+          </div>
+        </div>
+        <!-- <div class="card ">
+        <div class="card-body 2">
+            <h3 class="card-title display-4">Title</h3>
+            <hr>
+            <p class="card-text text-center"> <h2 class=" degree text-center text-warning">°C</h2></p>
+        </div>
+    </div>
+    <div class="card ">
+        <div class="card-body 3">
+            <h3 class="card-title display-4">Title</h3>
+            <hr>
+            <p class="card-text text-center"><h2 class=" degree text-center text-warning">°C</h2></p>
+        </div>
+    </div>
+    <div class="card ">
+        <div class="card-body 4">
+            <h3 class="card-title display-4">Title</h3>
+            <hr>
+            <p class="card-text text-center"> 
+                <h2 class=" degree text-center  text-warning">°C</h2>
+        </div>
+    </div> -->
+      </div>
+    </div>
+  </body>
+  <script>
+    var input;
+    const finalData = [];
+    const card = document.querySelector(".card");
+    const title = document.querySelector(".card-body h3");
+    const tempShow = document.querySelector(".details h1");
+    const zCode = document.querySelector(".form-control");
+    const sumbitBtn = document.querySelector(".btn");
+    const windS = document.querySelector('.wind')
+    const humidS = document.querySelector('.humid')
+    zCode.addEventListener('keyup', getData)
+    sumbitBtn.addEventListener("click", getData);
+    function getData(e) {
+      input = e.target.value;
+      let url = `https://api.openweathermap.org/data/2.5/weather?zip=${input},in&appid=b748592db0eb307c2b3ecd8ee6a453d6`;
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.onload = function () {
+        if (this.status == 200) {
+        const  data = JSON.parse(this.responseText);
+        const  temp = Math.floor(data.main.temp - 273.15)
+        const  humid = data.main.humidity
+        const  wind = data.wind.speed
+        const  name = data.name
+        const  country = data.sys.country
+        const  status = data.weather[0].description;
+         
+          title.innerHTML = `${name} , ${country}`;
+          tempShow.innerHTML = `${temp}`;
+          windS.innerHTML = `${wind} m/s`
+          humidS.innerHTML = `${humid} %`
+          card.style.display = "block";
+        }
+      };
+      xhr.onerror = function () {
+        console.log("Request Error..");
+      };
+      xhr.send();
+      console.log(finalData)
+     
+    }
+  </script>
+</html>
